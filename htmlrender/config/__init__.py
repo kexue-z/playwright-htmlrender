@@ -5,7 +5,7 @@ LOGGING_CONFIG = {
     "disable_existing_loggers": False,
     "handlers": {
         "default": {
-            "class": "utils.log.LoguruHandler",
+            "class": "htmlrender.utils.log.LoguruHandler",
         },
     },
     "loggers": {
