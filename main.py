@@ -9,6 +9,7 @@ from utils.api import md_to_pic, capture_page
 from utils.log import logger
 from config.config import fastapi_config, uvicorn_config
 from utils.browser import get_browser, shutdown_browser
+from utils.img_cache import create_cache, delete_cache
 
 logger.debug(f"fastapi_config: {fastapi_config}")
 app = FastAPI(**fastapi_config)
@@ -22,11 +23,13 @@ async def startup():
     global browser
     browser = await get_browser()
     logger.success("Browser Started")
+    create_cache()
 
 
 @app.on_event("shutdown")
 async def shutdown():
     await shutdown_browser()
+    delete_cache()
     logger.success("Browser Stoped")
 
 
