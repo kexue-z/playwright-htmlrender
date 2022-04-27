@@ -57,22 +57,3 @@ logger_id = logger.add(
     filter=default_filter,
     format=default_format,
 )
-
-__autodoc__ = {"Filter": False, "LoguruHandler": False}
-
-LOGGING_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "default": {
-            "class": "utils.log.LoguruHandler",
-        },
-    },
-    "loggers": {
-        "uvicorn.error": {"handlers": ["default"], "level": "INFO"},
-        "uvicorn.access": {
-            "handlers": ["default"],
-            "level": "INFO",
-        },
-    },
-}

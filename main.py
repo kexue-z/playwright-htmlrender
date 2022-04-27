@@ -11,7 +11,6 @@ from config.config import fastapi_config, uvicorn_config
 from utils.browser import get_browser, shutdown_browser
 from utils.img_cache import create_cache, delete_cache
 
-logger.debug(f"fastapi_config: {fastapi_config}")
 app = FastAPI(**fastapi_config)
 
 host = uvicorn_config["host"]
@@ -43,13 +42,13 @@ async def web(
     url: str,
 ):
     uid = await capture_page(url)
-    return {"img_url": f"{host}:{port}/img/{uid}.png"}
+    return {"img_url": f"http://{host}:{port}/img/{uid}.png"}
 
 
 @app.get("/md/")
 async def md(md: str):
     uid = await md_to_pic(md)
-    return {"img_url": f"{host}:{port}/img/{uid}.png"}
+    return {"img_url": f"http://{host}:{port}/img/{uid}.png"}
 
 
 @app.get("/img/{filename:path}")
@@ -63,5 +62,4 @@ async def read_file(filename):
 
 if __name__ == "__main__":
     logger.success("Starting...")
-    logger.debug(f"uvicorn_config: {uvicorn_config}")
-    uvicorn.run(**(uvicorn_config))
+    uvicorn.run(app="main:app", **uvicorn_config)

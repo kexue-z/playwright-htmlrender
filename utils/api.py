@@ -74,7 +74,6 @@ async def md_to_pic(
             md = await read_file(md_path)
         else:
             raise RenderError("必须输入 md 或 md_path")
-    logger.debug(md)
     md = markdown.markdown(
         md,
         extensions=[
@@ -87,8 +86,6 @@ async def md_to_pic(
         ],
         extension_configs={"mdx_math": {"enable_dollar_delimiter": True}},
     )
-
-    logger.debug(md)
     extra = ""
     if "math/tex" in md:
         katex_css = await read_tpl("katex/katex.min.b64_fonts.css")
@@ -166,7 +163,6 @@ async def html_to_pic(
     Returns:
         str: 图片UUID
     """
-    # logger.debug(f"html:\n{html}")
     if "file:" not in template_path:
         raise RenderError("template_path 应该为 file:///path/to/template")
     async with get_new_page(**kwargs) as page:
