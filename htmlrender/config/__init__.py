@@ -29,3 +29,5 @@ fastapi_config = {
 }
 
 weather_config = json.load(open("config/weather.json"))
+
+LOG_LEVEL = "INFO"

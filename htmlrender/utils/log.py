@@ -3,13 +3,14 @@ import logging
 from typing import Union
 
 import loguru
+from htmlrender.config import LOG_LEVEL
 
 logger = loguru.logger
 
 
 class Filter:
     def __init__(self) -> None:
-        self.level: Union[int, str] = "INFO"
+        self.level: Union[int, str] = LOG_LEVEL
 
     def __call__(self, record):
         module_name: str = record["name"]
