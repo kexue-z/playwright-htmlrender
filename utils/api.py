@@ -1,3 +1,5 @@
+import io
+import uuid
 from os import getcwd
 from typing import Optional
 from pathlib import Path
@@ -5,6 +7,7 @@ from pathlib import Path
 import jinja2
 import aiofiles
 import markdown
+from PIL import Image
 
 from .log import logger
 from .browser import get_new_page
@@ -25,7 +28,7 @@ env = jinja2.Environment(
 
 async def text_to_pic(
     text: str, css_path: Optional[str] = None, width: int = 500
-) -> bytes:
+) -> str:
     """多行文本转图片
 
     Args:
@@ -34,7 +37,7 @@ async def text_to_pic(
         width (int, optional): 图片宽度，默认为 500
 
     Returns:
-        bytes: 图片, 可直接发送
+        str: 图片UUID
     """
     template = env.get_template("text.html")
 
@@ -53,7 +56,7 @@ async def md_to_pic(
     md_path: Optional[str] = None,
     css_path: Optional[str] = None,
     width: int = 500,
-) -> bytes:
+) -> str:
     """markdown 转 图片
 
     Args:
@@ -63,7 +66,7 @@ async def md_to_pic(
         width (int, optional): 图片宽度，默认为 500
 
     Returns:
-        bytes: 图片, 可直接发送
+        str: 图片地址
     """
     template = env.get_template("markdown.html")
     if not md:
@@ -152,7 +155,7 @@ async def template_to_html(
 
 async def html_to_pic(
     html: str, wait: int = 0, template_path: str = f"file://{getcwd()}", **kwargs
-) -> bytes:
+) -> str:
     """html转图片
 
     Args:
@@ -161,7 +164,7 @@ async def html_to_pic(
         template_path (str, optional): 模板路径 如 "file:///path/to/template/"
 
     Returns:
-        bytes: 图片, 可直接发送
+        str: 图片UUID
     """
     # logger.debug(f"html:\n{html}")
     if "file:" not in template_path:
@@ -171,7 +174,12 @@ async def html_to_pic(
         await page.set_content(html, wait_until="networkidle")
         await page.wait_for_timeout(wait)
         img_raw = await page.screenshot(full_page=True)
-    return img_raw
+
+    img = Image.open(io.BytesIO(img_raw))
+    uid = str(uuid.uuid4())
+    dir = Path(f".cache/img/{uid}.png")
+    img.save(dir)
+    return uid
 
 
 async def template_to_pic(
@@ -183,7 +191,7 @@ async def template_to_pic(
         "base_url": f"file://{getcwd()}",
     },
     wait: int = 0,
-) -> bytes:
+) -> str:
     """使用jinja2模板引擎通过html生成图片
 
     Args:
@@ -193,7 +201,7 @@ async def template_to_pic(
         pages (dict): 网页参数 Defaults to {"base_url": f"file://{getcwd()}", "viewport": {"width": 500, "height": 10}}
         wait (int, optional): 网页载入等待时间. Defaults to 0.
     Returns:
-        bytes: 图片 可直接发送
+        str: 图片UUID
     """
 
     template_env = jinja2.Environment(
@@ -210,17 +218,24 @@ async def template_to_pic(
     )
 
 
-async def capture_element(
-    url: str, element: str, timeout: Optional[float] = 0, **kwargs
-) -> bytes:
-    async with get_new_page(**kwargs) as page:
-        await page.goto(url, timeout=timeout)  # type: ignore
-        img_raw = await page.locator(element).screenshot()
-    return img_raw
+# async def capture_element(
+#     url: str, element: str, timeout: Optional[float] = 0, **kwargs
+# ) -> Path:
+#     async with get_new_page(**kwargs) as page:
+#         await page.goto(url, timeout=timeout)  # type: ignore
+#         img_raw = await page.locator(element).screenshot()
+#     dir = Path(f".cache/img/{str(uuid.uuid4())}.png")
+#     img = Image.open(io.BytesIO(img_raw))
+#     img.save(dir)
+#     return dir
 
 
-async def capture_page(url: str, timeout: Optional[float] = 0, **kwargs) -> bytes:
+async def capture_page(url: str, timeout: Optional[float] = 0, **kwargs) -> str:
     async with get_new_page(**kwargs) as page:
         await page.goto(url, timeout=timeout)  # type: ignore
         img_raw = await page.screenshot()
-        return img_raw
+    uid = str(uuid.uuid4())
+    dir = Path(f".cache/img/{uid}.png")
+    img = Image.open(io.BytesIO(img_raw))
+    img.save(dir)
+    return uid
