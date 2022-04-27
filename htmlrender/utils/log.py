@@ -51,7 +51,7 @@ default_format: str = (
 """默认日志格式"""
 logger_id = logger.add(
     sys.stdout,
-    level=0,
+    level="DEBUG",
     colorize=True,
     diagnose=True,
     filter=default_filter,

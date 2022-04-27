@@ -16,6 +16,7 @@ async def startup():
 async def shutdown():
     await shutdown_browser()
     delete_cache()
+    logger.debug("Browser Shutdown")
     logger.success("Browser Stoped")
 
 

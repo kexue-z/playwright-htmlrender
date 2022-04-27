@@ -8,11 +8,9 @@ import jinja2
 import aiofiles
 import markdown
 from PIL import Image
+from htmlrender.utils.log import logger
 
-from .. import logger
 from .browser import get_new_page
-
-logger.warning("请使用 asyncio.run(main())")
 
 
 class RenderError(Exception):

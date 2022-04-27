@@ -9,10 +9,10 @@ LOGGING_CONFIG = {
         },
     },
     "loggers": {
-        "uvicorn.error": {"handlers": ["default"], "level": "INFO"},
+        "uvicorn.error": {"handlers": ["default"], "level": "DEBUG"},
         "uvicorn.access": {
             "handlers": ["default"],
-            "level": "INFO",
+            "level": "DEBUG",
         },
     },
 }
@@ -22,7 +22,6 @@ uvicorn_config = {
     "port": 8080,
     "log_config": LOGGING_CONFIG,
     "debug": True,
-    "log_level": "debug",
 }
 
 fastapi_config = {
