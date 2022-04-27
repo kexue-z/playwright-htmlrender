@@ -20,3 +20,4 @@ async def shutdown():
 
 
 from .root import root
+from .md2pic import md2pic
